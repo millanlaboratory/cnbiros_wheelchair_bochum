@@ -28,7 +28,7 @@
 <!--						BCI	Interfaces							-->
 <!-- ************************************************************** -->
 
-	<group if="$(arg enable_bci)" />
+	<group if="$(arg enable_bci)" >
 		<!-- BCI interfaces parameters -->
 		<rosparam subst_value="True" file="$(arg params_bci_interfaces)" command="load" />
 		
@@ -43,7 +43,7 @@
 <!--					RVIZ visualization							-->
 <!-- ************************************************************** -->
 	
-	<group if="$(arg visualization)" />
+	<group if="$(arg visualization)" >
 		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find cnbiros_wheelchair_description)/launch/wheelchair_footprint.rviz"/>
 	</group>
 

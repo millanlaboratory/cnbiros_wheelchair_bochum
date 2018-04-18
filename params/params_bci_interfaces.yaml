@@ -1,5 +1,5 @@
-
-tid_pipes: [/dev, /bus]
+rostid:
+    tid_pipes: [/dev, /bus]
 
 tid_to_point:
     frame_id: base_link

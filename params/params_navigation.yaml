@@ -39,10 +39,8 @@ EBandPlannerROS:
 
     virtual_mass:           100.0
 
-# Recovery behavior parameters
 recovery_behaviors:  
-    name: conservative_reset
-    type: clear_costmap_recovery/ClearCostmapRecovery
+    - {name: conservative_reset, type: clear_costmap_recovery/ClearCostmapRecovery}
 
 clearing_rotation_allowed: false
 recovery_behavior_enabled: true
