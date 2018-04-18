@@ -6,10 +6,12 @@
 <!-- ************************************************************** -->
 
 	<!-- Running options -->
-	<arg name="autostart"		default="False" />
-	<arg name="enable_bci"		default="False" />
-	<arg name="visualization"	default="True" />
-	<arg name="on_place"		default="False" />
+	<arg name="autostart"			default="False" />
+	<arg name="enable_bci"			default="False" />
+	<arg name="visualization"		default="True" />
+	<arg name="on_place"			default="False" />
+	<arg name="enable_repellors"	default="True" />
+	<arg name="enable_attractors"	default="True" />
 
 	<!-- Wheelchair parameters -->
 	<arg name="wheelchair_description"	default="$(find cnbiros_wheelchair_description)/urdf/wheelchair.urdf.xacro" />
@@ -105,6 +107,8 @@
 	<node pkg="cnbiros_shared_navigation" type="shared_actions" output="screen" name="shared_actions" >
 	  <rosparam param="autostart" subst_value="True">$(arg autostart)</rosparam>
 	  <rosparam param="on_place" subst_value="True">$(arg on_place)</rosparam>
+	  <rosparam param="enable_repellors" subst_value="True">$(arg enable_repellors)</rosparam>
+	  <rosparam param="enable_attractors" subst_value="True">$(arg enable_attractors)</rosparam>
 	</node>
 
 </launch>
