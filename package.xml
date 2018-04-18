@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>cnbiros_wheelchair_bochum</name>
+  <version>0.9.5</version>
+  <description>CNBIROS Wheelchair Bochum package</description>
+  <author email="luca.tonin@epfl.ch">Luca Tonin</author>
+  <maintainer email="luca.tonin@epfl.ch">Luca Tonin</maintainer>
+
+  <license>GPLv3</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <exec_depend>roscpp</exec_depend>
+  <build_depend>cmake_modules</build_depend>
+
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+
+  <exec_depend>move_base</exec_depend>
+  <exec_depend>map_server</exec_depend>
+  <exec_depend>eband_local_planner</exec_depend>
+  <exec_depend>cnbiros_shared_navigation</exec_depend>
+</package>

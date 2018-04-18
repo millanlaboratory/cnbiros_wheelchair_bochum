@@ -1,0 +1,16 @@
+costmap:
+    threshold:  100.0
+    frame_id:   "base_link"
+    source:     "/move_base/local_costmap/costmap"
+    sectors:    "/repellors"
+    min_angle:  -1.570796325
+    max_angle:  1.570796325 
+    nsectors:   41
+
+point:
+    frame_id:   "base_link"
+    source:     "/point"
+    sectors:    "/attractors"
+    min_angle:  -1.570796325
+    max_angle:  1.570796325 
+    nsectors:   41

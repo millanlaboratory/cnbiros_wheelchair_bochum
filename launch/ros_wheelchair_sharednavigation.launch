@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<launch>
+
+	<!-- ************* Arguments ******************** -->
+	<arg name="simulation"				default="False" />
+	<arg name="set_autostart"			default="False" />
+	<arg name="bci_bringup"				default="False" />
+	<arg name="set_local_planner"		default="eband_local_planner/EBandPlannerROS" />
+	<arg name="map_server_params"		default="$(find cnbiros_wheelchair_bci)/params/map_server_params.yaml" />
+	<arg name="costmap_common_params"	default="$(find cnbiros_wheelchair_bci)/params/costmap_common_params.yaml" />
+	<arg name="costmap_global_params"	default="$(find cnbiros_wheelchair_bci)/params/costmap_global_params.yaml" />
+	<arg name="costmap_local_params"	default="$(find cnbiros_wheelchair_bci)/params/costmap_local_params.yaml" />
+	<arg name="planner_local_params"	default="$(find cnbiros_wheelchair_bci)/params/planner_local_params.yaml" unless="$(arg simulation)"/>
+	<arg name="planner_local_params"	default="$(find cnbiros_wheelchair_bci)/params/planner_local_simulation_params.yaml" if="$(arg simulation)"/>
+	<arg name="recovery_params"			default="$(find cnbiros_wheelchair_bci)/params/recovery_params.yaml" />
+	<arg name="proximitysectors_params"	default="$(find cnbiros_wheelchair_bci)/params/proximitysector_params.yaml" />
+	<arg name="sharedactions_params"	default="$(find cnbiros_wheelchair_bci)/params/sharedactions_params.yaml" unless="$(arg simulation)"/>
+	<arg name="sharedactions_params"	default="$(find cnbiros_wheelchair_bci)/params/sharedactions_simulation_params.yaml" if="$(arg simulation)"/>
+	<arg name="bci_params"				default="$(find cnbiros_wheelchair_bci)/params/bci_params.yaml" />
+
+	<!-- ******************************************** -->
+
+	<!-- ************* Move base group ***************** -->
+	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_server_params)" />
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<rosparam subst_value="True" file="$(arg costmap_common_params)" command="load" ns="global_costmap" />	
+		<rosparam subst_value="True" file="$(arg costmap_common_params)" command="load" ns="local_costmap" />
+		<rosparam subst_value="True" file="$(arg costmap_global_params)" command="load" />
+		<rosparam subst_value="True" file="$(arg costmap_local_params)"  command="load" />
+		<rosparam subst_value="True" file="$(arg planner_local_params)" command="load" />
+		<rosparam subst_value="True" file="$(arg recovery_params)" command="load"/>
+		<rosparam subst_value="True" param="base_local_planner">$(arg set_local_planner)</rosparam>
+	</node>
+	<!-- *********************************************** -->
+
+
+	<!-- ************* Shared actions group ***************** -->
+	<node pkg="cnbiros_shared_navigation" type="costmap_to_proximitysector" output="screen" name="costmap_to_proximitysector" >
+	  <rosparam subst_value="True" file="$(arg proximitysectors_params)" command="load" />
+	</node>
+
+	<node pkg="cnbiros_shared_navigation" type="point_to_proximitysector" output="screen" name="point_to_proximitysector" >
+	  <rosparam subst_value="True" file="$(arg proximitysectors_params)" command="load" />
+	</node>
+
+	<node pkg="cnbiros_shared_navigation" type="shared_actions" output="screen" name="shared_actions" >
+	  <rosparam param="autostart" subst_value="True">$(arg set_autostart)</rosparam>
+	  <rosparam file="$(arg sharedactions_params)" command="load" />
+	</node>
+	<!-- *********************************************** -->
+
+	<group if="$(arg bci_bringup)">
+		<rosparam subst_value="True" file="$(arg bci_params)"  command="load" />
+		<node pkg="cnbiros_bci" type="rostid" name="rostid" output="screen" />
+		<node pkg="cnbiros_bci" type="tid_to_point" output="screen" name="tid_to_point" />
+	</group>
+	
+</launch>
