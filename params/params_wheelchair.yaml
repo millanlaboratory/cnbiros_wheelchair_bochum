@@ -1,6 +1,6 @@
 # Hokuyo parameters
 hokuyo_scan:
-    frame_id:   hokuyo_link
+    frame_id:   hokuyo_link_cacca
     angle_min:  -1.5708         # -M_PI/2.0
     angle_max:   1.5708         #  M_PI/2.0
 
