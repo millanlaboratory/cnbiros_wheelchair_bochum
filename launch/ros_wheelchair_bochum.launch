@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<launch>
+
+<!-- ************************************************************** -->
+<!--						Arguments								-->
+<!-- ************************************************************** -->
+
+	<!-- Running options -->
+	<arg name="opt_autostart"	default="False" />
+	<arg name="opt_bci_enable"	default="False" />
+
+	<!-- Wheelchair parameters -->
+	<arg name="params_hokuyo"	default="$(find cnbiros_wheelchair_bochum)/params/params_hokuyo.yaml" />
+	<arg name="params_kinect"	default="$(find cnbiros_wheelchair_bochum)/params/params_kinect.yaml" />
+	<arg name="params_motors"	default="$(find cnbiros_wheelchair_bochum)/params/params_motors.yaml" />
+	<arg name="params_odometry"	default="$(find cnbiros_wheelchair_bochum)/params/params_odometry.yaml" />
+
+	<!-- Navigation parameters -->
+	<arg name="params_mapserver"		default="$(find cnbiros_wheelchair_bochum)/params/params_mapserver.yaml" />
+	<arg name="params_costmap_common"	default="$(find cnbiros_wheelchair_bochum)/params/params_costmap_common.yaml" />
+	<arg name="params_costmap_global"	default="$(find cnbiros_wheelchair_bochum)/params/params_costmap_global.yaml" />
+	<arg name="params_costmap_local"	default="$(find cnbiros_wheelchair_bochum)/params/params_costmap_local.yaml" />
+	<arg name="params_planner_type"		default="eband_local_planner/EBandPlannerROS" />
+	<arg name="params_planner"			default="$(find cnbiros_wheelchair_bochum)/params/params_planner.yaml" />
+	<arg name="params_recovery"			default="$(find cnbiros_wheelchair_bochum)/params/params_recovery.yaml" />
+	<arg name="params_proximitysectors"	default="$(find cnbiros_wheelchair_bochum)/params/params_proximitysector.yaml" />
+	<arg name="params_sharedactions"	default="$(find cnbiros_wheelchair_bochum)/params/params_sharedactions.yaml" />
+
+	<!-- BCI control parameters -->
+	<arg name="params_bci"				default="$(find cnbiros_wheelchair_bochum)/params/params_bci.yaml" />
+	
+
+<!-- ************************************************************** -->
+<!--						Wheelchair								-->
+<!-- ************************************************************** -->
+
+	<!-- Kinect bringup -->
+	<include file="$(find cnbiros_wheelchair)/launch/ros_kinect_to_laserscan.launch" />
+    
+	<!-- Hokuyo LaserScan -->
+	<node name="hokuyo_scan" pkg="urg_node" type="urg_node" output="screen">
+		<rosparam subst_value="True" file="$(arg params_hokuyo)" command="load" />
+		<remap from="scan" to="/hokuyo/scan"/>
+	</node>
+
+	<!-- Motors -->
+	<node name="motors" pkg="cnbiros_wheelchair" type="ros_wheelchair_motors" output="screen">
+		<rosparam subst_value="True" file="$(arg params_motors)" command="load" />
+	</node>
+
+	<!-- Odometry -->
+	<node name="odometry" pkg="cnbiros_wheelchair" type="ros_wheelchair_odometry" output="screen">
+		<rosparam subst_value="True" file="$(arg params_odometry)" command="load" />
+	</node>
+
+	<!-- Transformations -->
+	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+	<node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" />
+
+	<!-- Robot description -->
+	<include file="$(find cnbiros_wheelchair_description)/launch/ros_wheelchair_description.launch" />
+
+
+</launch>

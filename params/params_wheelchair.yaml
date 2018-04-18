@@ -1,0 +1,18 @@
+# Hokuyo parameters
+hokuyo_scan:
+    frame_id:   hokuyo_link
+    angle_min:  -1.5708         # -M_PI/2.0
+    angle_max:   1.5708         #  M_PI/2.0
+
+# Wheelchair motors parameters
+motors:
+    port:   /dev/controller
+
+# Wheelchair odometry parameters
+odometry:
+    lport:      /dev/encoder.left
+    rport:      /dev/encoder.right
+    axle:       0.5240
+    diameter:   0.3556
+    revolution: 280
+
