@@ -1,7 +1,0 @@
-# Wheelchair odometry parameters
-lport:      /dev/encoder.left
-rport:      /dev/encoder.right
-axle:       0.5240
-diameter:   0.3556
-revolution: 280
-

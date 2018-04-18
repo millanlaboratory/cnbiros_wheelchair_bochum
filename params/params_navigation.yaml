@@ -1,0 +1,48 @@
+# Global costmap parameters
+global_costmap:
+    global_frame:       /odom
+    robot_base_frame:   base_link
+    update_frequency:   5.0
+    static_map:         true
+    rolling_window:             false
+    width:              200
+    height:             200
+    origin_x:           0
+    origin_y:           0
+
+# Local costmap parameters
+local_costmap:
+    global_frame:               /odom
+    robot_base_frame:           base_link
+    update_frequency:           20.0
+    publish_frequency:          20.0
+    static_map:                 false
+    rolling_window:             true
+    width:                      6
+    height:                     6
+    resolution:                 0.05
+    always_send_full_costmap:   true 
+    plugins:
+        - {name: obstacle_layer, type: "costmap_2d::VoxelLayer"}
+        - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+
+# Planner parameters
+EBandPlannerROS:
+    max_vel_lin:            0.5
+    max_vel_th:             0.1
+    
+    max_translational_acceleration: 0.01
+    max_rotational_acceleration: 0.01
+
+    xy_goal_tolerance:      0.0001
+    yaw_goal_tolerance:     0.0001
+
+    virtual_mass:           100.0
+
+# Recovery behavior parameters
+recovery_behaviors:  
+    name: conservative_reset
+    type: clear_costmap_recovery/ClearCostmapRecovery
+
+clearing_rotation_allowed: false
+recovery_behavior_enabled: true

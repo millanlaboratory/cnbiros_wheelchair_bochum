@@ -1,4 +1,0 @@
-recovery_behaviors:  [{name: conservative_reset, type: clear_costmap_recovery/ClearCostmapRecovery}]
-
-clearing_rotation_allowed: false
-recovery_behavior_enabled: true

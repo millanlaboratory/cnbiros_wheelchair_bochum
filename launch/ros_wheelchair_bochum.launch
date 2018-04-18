@@ -6,59 +6,102 @@
 <!-- ************************************************************** -->
 
 	<!-- Running options -->
-	<arg name="opt_autostart"	default="False" />
-	<arg name="opt_bci_enable"	default="False" />
+	<arg name="autostart"		default="False" />
+	<arg name="enable_bci"		default="False" />
+	<arg name="visualization"	default="True" />
 
 	<!-- Wheelchair parameters -->
-	<arg name="params_hokuyo"	default="$(find cnbiros_wheelchair_bochum)/params/params_hokuyo.yaml" />
-	<arg name="params_kinect"	default="$(find cnbiros_wheelchair_bochum)/params/params_kinect.yaml" />
-	<arg name="params_motors"	default="$(find cnbiros_wheelchair_bochum)/params/params_motors.yaml" />
-	<arg name="params_odometry"	default="$(find cnbiros_wheelchair_bochum)/params/params_odometry.yaml" />
+	<arg name="wheelchair_description"	default="$(find cnbiros_wheelchair_description)/urdf/wheelchair.urdf.xacro" />
+	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/params_wheelchair.yaml" />
 
 	<!-- Navigation parameters -->
-	<arg name="params_mapserver"		default="$(find cnbiros_wheelchair_bochum)/params/params_mapserver.yaml" />
-	<arg name="params_costmap_common"	default="$(find cnbiros_wheelchair_bochum)/params/params_costmap_common.yaml" />
-	<arg name="params_costmap_global"	default="$(find cnbiros_wheelchair_bochum)/params/params_costmap_global.yaml" />
-	<arg name="params_costmap_local"	default="$(find cnbiros_wheelchair_bochum)/params/params_costmap_local.yaml" />
-	<arg name="params_planner_type"		default="eband_local_planner/EBandPlannerROS" />
-	<arg name="params_planner"			default="$(find cnbiros_wheelchair_bochum)/params/params_planner.yaml" />
-	<arg name="params_recovery"			default="$(find cnbiros_wheelchair_bochum)/params/params_recovery.yaml" />
-	<arg name="params_proximitysectors"	default="$(find cnbiros_wheelchair_bochum)/params/params_proximitysector.yaml" />
-	<arg name="params_sharedactions"	default="$(find cnbiros_wheelchair_bochum)/params/params_sharedactions.yaml" />
+	<arg name="params_planner_type"		 default="eband_local_planner/EBandPlannerROS" />
+	<arg name="params_navigation_common" default="$(find cnbiros_wheelchair_bochum)/params/params_navigation_common.yaml" />
+	<arg name="params_navigation"		 default="$(find cnbiros_wheelchair_bochum)/params/params_navigation.yaml" />
+	<arg name="params_mapserver"		 default="$(find cnbiros_wheelchair_bochum)/params/params_mapserver.yaml" />
+	<arg name="params_sharedactions"	 default="$(find cnbiros_wheelchair_bochum)/params/params_shared_actions.yaml" />
 
 	<!-- BCI control parameters -->
-	<arg name="params_bci"				default="$(find cnbiros_wheelchair_bochum)/params/params_bci.yaml" />
+	<arg name="params_bci_interfaces"	default="$(find cnbiros_wheelchair_bochum)/params/params_bci_interfaces.yaml" />
 	
+<!-- ************************************************************** -->
+<!--						BCI	Interfaces							-->
+<!-- ************************************************************** -->
+
+	<group if="$(arg enable_bci)" />
+		<!-- BCI interfaces parameters -->
+		<rosparam subst_value="True" file="$(arg params_bci_interfaces)" command="load" />
+		
+		<!-- TiD interface -->
+		<node pkg="cnbiros_bci" type="rostid" name="rostid" output="screen" />
+		
+		<!-- TiD converter -->
+		<node pkg="cnbiros_bci" type="tid_to_point" output="screen" name="tid_to_point" />
+	</group>
+
+<!-- ************************************************************** -->
+<!--					RVIZ visualization							-->
+<!-- ************************************************************** -->
+	
+	<group if="$(arg visualization)" />
+		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find cnbiros_wheelchair_description)/launch/wheelchair_footprint.rviz"/>
+	</group>
 
 <!-- ************************************************************** -->
 <!--						Wheelchair								-->
 <!-- ************************************************************** -->
 
+	<!-- Wheelchair parameter load -->
+	<rosparam subst_value="True" file="$(arg params_wheelchair)" command="load" />
+
 	<!-- Kinect bringup -->
-	<include file="$(find cnbiros_wheelchair)/launch/ros_kinect_to_laserscan.launch" />
-    
+	<include file="$(find openni_launch)/launch/openni.launch" />
+	<node name="kinect_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" >
+       	<remap from="image" to="camera/depth/image"/>
+		<remap from="scan" to="camera/scan"/>
+	</node>
+
 	<!-- Hokuyo LaserScan -->
 	<node name="hokuyo_scan" pkg="urg_node" type="urg_node" output="screen">
-		<rosparam subst_value="True" file="$(arg params_hokuyo)" command="load" />
 		<remap from="scan" to="/hokuyo/scan"/>
 	</node>
 
 	<!-- Motors -->
-	<node name="motors" pkg="cnbiros_wheelchair" type="ros_wheelchair_motors" output="screen">
-		<rosparam subst_value="True" file="$(arg params_motors)" command="load" />
-	</node>
+	<node name="motors" pkg="cnbiros_wheelchair" type="ros_wheelchair_motors" output="screen" />
 
 	<!-- Odometry -->
-	<node name="odometry" pkg="cnbiros_wheelchair" type="ros_wheelchair_odometry" output="screen">
-		<rosparam subst_value="True" file="$(arg params_odometry)" command="load" />
-	</node>
+	<node name="odometry" pkg="cnbiros_wheelchair" type="ros_wheelchair_odometry" output="screen" />
+
+	<!-- Wheelchair description -->
+	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg wheelchair_description)" />
 
 	<!-- Transformations -->
 	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
 	<node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" />
 
-	<!-- Robot description -->
-	<include file="$(find cnbiros_wheelchair_description)/launch/ros_wheelchair_description.launch" />
+<!-- ************************************************************** -->
+<!--						Navigation								-->
+<!-- ************************************************************** -->
 
+	<!-- Move base -->
+	<node name="map_server" pkg="map_server" type="map_server" args="$(arg params_mapserver)" />
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<rosparam subst_value="True" param="base_local_planner">$(arg params_planner_type)</rosparam>
+		<rosparam subst_value="True" file="$(arg params_navigation_common)" command="load" ns="global_costmap" />	
+		<rosparam subst_value="True" file="$(arg params_navigation_common)" command="load" ns="local_costmap" />	
+		<rosparam subst_value="True" file="$(arg params_navigation)" command="load" />
+	</node>
+
+	<!-- Shared actions parameters load -->
+	<rosparam subst_value="True" file="$(arg params_sharedactions)" command="load" />
+
+	<!-- Proximity sector converters -->
+	<node pkg="cnbiros_shared_navigation" type="costmap_to_proximitysector" output="screen" name="costmap_to_proximitysector" />
+	<node pkg="cnbiros_shared_navigation" type="point_to_proximitysector" output="screen" name="point_to_proximitysector" />
+
+	<!-- Shared actions -->
+	<node pkg="cnbiros_shared_navigation" type="shared_actions" output="screen" name="shared_actions" >
+	  <rosparam param="autostart" subst_value="True">$(arg autostart)</rosparam>
+	</node>
 
 </launch>

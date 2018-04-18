@@ -1,3 +1,5 @@
+# Common navigation parameters (for local and global costmaps)
+
 footprint: [ [-0.507, 0.315], [-0.507, -0.315], [0.395, -0.315], [0.395, 0.315] ]
 
 obstacle_layer:
@@ -26,29 +28,6 @@ obstacle_layer:
       clearing:      true 
       obstacle_range:        10.0
       raytrace_range:        5.5
-   #ultrasonic_points:
-   #    data_type:   PointCloud
-   #    topic:       /sonar_pointcloud
-   #    marking:     true
-   #    clearing:    true
-   #    raytrace_range: 1.0
-   #    obstacle_range: 0.9
-
-#sonars_layer:
-#   enabled:                true
-#   clear_on_max_reading:   true
-#   clear_threshold:        0.8
-#   topics: 
-#       - "/sonars/0xe0_filtered"
-#       - "/sonars/0xe2_filtered"
-#       - "/sonars/0xe4_filtered"
-#       - "/sonars/0xe6_filtered"
-#       - "/sonars/0xe8_filtered"
-#       - "/sonars/0xea_filtered"
-#       - "/sonars/0xec_filtered"
-#       - "/sonars/0xee_filtered"
-#       - "/sonars/0xf0_filtered"
-#       - "/sonars/0xf2_filtered"
 
 inflation_layer:
    enabled:                true

@@ -1,5 +1,0 @@
-# Hokuyo parameters
-frame_id:   hokuyo_link
-angle_min:  -1.5708         # -M_PI/2.0
-angle_max:   1.5708         #  M_PI/2.0
-

@@ -1,6 +1,11 @@
+# Kinect to Laser scan parameters
+kinect_to_laserscan:
+    range_min:  0.45
+    range_max:  10.0
+
 # Hokuyo parameters
 hokuyo_scan:
-    frame_id:   hokuyo_link_cacca
+    frame_id:   hokuyo_link
     angle_min:  -1.5708         # -M_PI/2.0
     angle_max:   1.5708         #  M_PI/2.0
 
