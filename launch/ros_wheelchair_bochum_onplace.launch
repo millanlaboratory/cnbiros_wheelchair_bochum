@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<launch>
+
+<!-- ************************************************************** -->
+<!--						Arguments								-->
+<!-- ************************************************************** -->
+
+	<!-- Running options -->
+	<arg name="enable_bci"			default="False" />
+
+	<!-- Wheelchair parameters -->
+	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/params_wheelchair.yaml" />
+
+	<!-- BCI control parameters -->
+	<arg name="params_bci_interfaces"	default="$(find cnbiros_wheelchair_bochum)/params/params_bci_interfaces.yaml" />
+	
+<!-- ************************************************************** -->
+<!--						BCI	Interfaces							-->
+<!-- ************************************************************** -->
+
+	<group if="$(arg enable_bci)">
+
+		<!-- BCI interfaces parameters -->
+		<rosparam subst_value="True" file="$(arg params_bci_interfaces)" command="load" />
+		
+		<!-- TiD interface -->
+		<node pkg="cnbiros_bci" type="rostid" name="rostid" output="screen" />
+		
+		<!-- TiD converter to cmd_vel -->
+		<node pkg="cnbiros_bci" type="tid_to_cmdvel" output="screen" name="tid_to_cmdvel" />
+	</group>
+
+<!-- ************************************************************** -->
+<!--						Wheelchair								-->
+<!-- ************************************************************** -->
+
+	<!-- Wheelchair parameter load -->
+	<rosparam subst_value="True" file="$(arg params_wheelchair)" command="load" />
+
+	<!-- Motors -->
+	<node name="motors" pkg="cnbiros_wheelchair" type="ros_wheelchair_motors" output="screen" />
+
+</launch>
+
