@@ -7,6 +7,6 @@ tid_to_point:
     point:    /point
     distance: 1.0
     commands:
-        - {event: "0x6304", angle: -0.523598775}
-        - {event: "0x6305", angle:  0.523598775}
+        - {event: "0x6305", angle:  -0.52}
+        - {event: "0x6303", angle:  0.52}
         - {event: "0x6306", angle:  0.0}
