@@ -10,4 +10,4 @@ repellors_strength: 0.8
 repellors_decay:    0.8
 goal_max_distance:  1.5
 goal_half_position: 0.7
-command_timeout:    6.0
+command_timeout:    2.0
