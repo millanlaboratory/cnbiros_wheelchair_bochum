@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<launch>
+
+<!-- ************************************************************** -->
+<!--						Arguments								-->
+<!-- ************************************************************** -->
+
+	<!-- Running options -->
+	<arg name="autostart"			default="False" />
+	<arg name="enable_bci"			default="False" />
+
+	<!-- Wheelchair parameters -->
+	<arg name="wheelchair_description"	default="$(find cnbiros_wheelchair_description)/urdf/wheelchair.urdf.xacro" />
+	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/params_wheelchair.yaml" />
+
+	<!-- BCI control parameters -->
+	<arg name="params_bci_interfaces"	default="$(find cnbiros_wheelchair_bochum)/params/params_bci_interfaces.yaml" />
+	
+<!-- ************************************************************** -->
+<!--						BCI	Interfaces							-->
+<!-- ************************************************************** -->
+
+	<group if="$(arg enable_bci)">
+
+		<!-- BCI interfaces parameters -->
+		<rosparam subst_value="True" file="$(arg params_bci_interfaces)" command="load" />
+		
+		<!-- TiD interface -->
+		<node pkg="cnbiros_bci" type="rostid" name="rostid" output="screen" />
+		
+		<!-- TiD converter to point -->
+		<node pkg="cnbiros_bci" type="tid_to_point" output="screen" name="tid_to_point" />
+		
+		<!-- TiD converter to cmd_vel -->
+		<node pkg="cnbiros_bci" type="tid_to_cmdvel" output="screen" name="tid_to_cmdvel" />
+	</group>
+
+<!-- ************************************************************** -->
+<!--						Wheelchair								-->
+<!-- ************************************************************** -->
+
+	<!-- Wheelchair parameter load -->
+	<rosparam subst_value="True" file="$(arg params_wheelchair)" command="load" />
+
+	<!-- Kinect bringup -->
+	<include file="$(find openni_launch)/launch/openni.launch" />
+	<node name="kinect_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" >
+       	<remap from="image" to="camera/depth/image"/>
+		<remap from="scan" to="camera/scan"/>
+	</node>
+
+	<!-- Hokuyo LaserScan -->
+	<node name="hokuyo_scan" pkg="urg_node" type="urg_node" output="screen">
+		<remap from="scan" to="/hokuyo/scan"/>
+	</node>
+
+	<!-- Motors -->
+	<node name="motors" pkg="cnbiros_wheelchair" type="ros_wheelchair_motors" output="screen" />
+
+	<!-- Odometry -->
+	<node name="odometry" pkg="cnbiros_wheelchair" type="ros_wheelchair_odometry" output="screen" />
+
+	<!-- Wheelchair description -->
+	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg wheelchair_description)" />
+
+	<!-- Transformations -->
+	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+	<node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" />
+
+
+</launch>
+
