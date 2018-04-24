@@ -19,5 +19,5 @@ tid_to_cmdvel:
         - {event: "0x6602", linear:  0.0, angular:  0.0, label: "stop"}
         - {event: "0x6603", linear:  0.3, angular:  0.0, label: "forward"}
         - {event: "0x6604", linear: -0.3, angular:  0.0, label: "backward"}
-        - {event: "0x6303", linear:  0.0, angular:  0.6, label: "left"}
-        - {event: "0x6305", linear:  0.0, angular: -0.6, label: "right"}
+        - {event: "0x6605", linear:  0.0, angular: -0.6, label: "right"}
+        - {event: "0x6606", linear:  0.0, angular:  0.6, label: "left"}
