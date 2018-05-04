@@ -1,6 +1,6 @@
 # Common navigation parameters (for local and global costmaps)
 
-footprint: [ [-0.507, 0.315], [-0.507, -0.315], [0.895, -0.315], [0.895, 0.315] ]
+footprint: [ [-0.550, 0.345], [-0.550, -0.345], [1.000, -0.345], [1.000, 0.345] ]
 #footprint: [ [-0.507, 0.315], [-0.507, -0.315], [0.395, -0.315], [0.395, 0.315] ]
 
 obstacle_layer:
