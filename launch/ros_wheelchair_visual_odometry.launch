@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<launch>
+
+<!-- ************************************************************** -->
+<!--						Arguments								-->
+<!-- ************************************************************** -->
+
+	<!-- Running options -->
+	<arg name="visualization"		default="False" />
+
+	<!-- Wheelchair parameters -->
+	<arg name="wheelchair_description"	default="$(find cnbiros_wheelchair_description)/urdf/wheelchair.urdf.xacro" />
+	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/params_wheelchair.yaml" />
+
+
+<!-- ************************************************************** -->
+<!--					RVIZ visualization							-->
+<!-- ************************************************************** -->
+	
+	<group if="$(arg visualization)">
+		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find cnbiros_wheelchair_description)/launch/wheelchair_footprint.rviz"/>
+	</group>
+
+<!-- ************************************************************** -->
+<!--						Wheelchair								-->
+<!-- ************************************************************** -->
+
+	<!-- Wheelchair parameter load -->
+	<rosparam subst_value="True" file="$(arg params_wheelchair)" command="load" />
+
+	<!-- Wheelchair description -->
+	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg wheelchair_description)" />
+
+	<!-- Transformations -->
+	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+	<node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" />
+
+<!-- ************************************************************** -->
+<!--						Visual odometry							-->
+<!-- ************************************************************** -->
+	
+
+	<node pkg="rtabmap_ros" type="rgbd_odometry" name="rgbd_odometry" output="screen" >
+		<remap from="/rgb/image/" to="/camera/rgb/image_rect_color"/>
+		<remap from="/depth/image/" to="/camera/depth_registered/image_raw"/>
+		<remap from="/rgb/camera_info/" to="/camera/rgb/camera_info" />
+	</node>
+
+
+</launch>
