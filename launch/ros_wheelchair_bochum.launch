@@ -61,17 +61,19 @@
 	<rosparam subst_value="True" file="$(arg params_wheelchair)" command="load" />
 
 	<!-- Openni bringup -->
-	<include file="$(find openni_launch)/launch/openni.launch" />
+	<include file="$(find openni_launch)/launch/openni.launch">
+		<arg name="depth_registration" value="True" />
+	</include>
 
 	<!-- Kinect to LaserScan -->
 	<node name="kinect_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" >
-       	<remap from="image" to="camera/depth/image"/>
+       	<remap from="image" to="camera/depth_registered/image"/>
 		<remap from="scan" to="camera/scan"/>
 	</node>
 
 	<!-- Visual odometry - rtabmap -->
-	<group if="$(arg enable_rgb_odometry)" />
-	<node pkg="rtabmap_ros" type="rgbd_odometry" name="rgbd_odometry" output="screen" >
+	<group if="$(arg enable_rgb_odometry)">
+	<node pkg="rtabmap_ros" type="rgbd_odometry" name="rgbd_odometry" >
 		<remap from="/rgb/image/" to="/camera/rgb/image_rect_color"/>
 		<remap from="/depth/image/" to="/camera/depth_registered/image_raw"/>
 		<remap from="/rgb/camera_info/" to="/camera/rgb/camera_info" />
@@ -87,7 +89,7 @@
 	<node name="motors" pkg="cnbiros_wheelchair" type="ros_wheelchair_motors" output="screen" />
 
 	<!-- Odometry -->
-	<group if="$(arg enable_encoders)" />
+	<group if="$(arg enable_encoders)">
 		<node name="odometry" pkg="cnbiros_wheelchair" type="ros_wheelchair_odometry" output="screen" />
 	</group>
 
