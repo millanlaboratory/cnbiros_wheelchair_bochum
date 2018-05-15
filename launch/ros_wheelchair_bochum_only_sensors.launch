@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<launch>
+
+<!-- ************************************************************** -->
+<!--						Arguments								-->
+<!-- ************************************************************** -->
+
+	<!-- Wheelchair parameters -->
+	<arg name="wheelchair_description"	default="$(find cnbiros_wheelchair_description)/urdf/wheelchair.urdf.xacro" />
+	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/params_wheelchair.yaml" />
+
+		<!-- Navigation parameters -->
+	<arg name="params_planner_type"		 default="eband_local_planner/EBandPlannerROS" />
+	<arg name="params_navigation_common" default="$(find cnbiros_wheelchair_bochum)/params/params_navigation_common.yaml" />
+	<arg name="params_navigation"		 default="$(find cnbiros_wheelchair_bochum)/params/params_navigation.yaml" />
+	<arg name="params_mapserver"		 default="$(find cnbiros_wheelchair_bochum)/params/params_mapserver.yaml" />
+	<arg name="params_sharedactions"	 default="$(find cnbiros_wheelchair_bochum)/params/params_shared_actions.yaml" />
+
+
+<!-- ************************************************************** -->
+<!--					RVIZ visualization							-->
+<!-- ************************************************************** -->
+	
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find cnbiros_wheelchair_description)/launch/wheelchair_footprint.rviz"/>
+
+<!-- ************************************************************** -->
+<!--						Wheelchair								-->
+<!-- ************************************************************** -->
+
+	<!-- Wheelchair parameter load -->
+	<rosparam subst_value="True" file="$(arg params_wheelchair)" command="load" />
+
+	<!-- Kinect bringup -->
+	<include file="$(find openni_launch)/launch/openni.launch" >
+		<arg name="depth_registration" value="True" />
+	</include>
+		
+	<node name="kinect_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" >
+		<remap from="image" to="/camera/depth_registered/image"/>
+		<remap from="scan" to="/camera/scan"/>
+	</node>
+
+	<!-- Hokuyo LaserScan -->
+	<node name="hokuyo_scan" pkg="urg_node" type="urg_node" output="screen">
+		<remap from="scan" to="/hokuyo/scan"/>
+	</node>
+
+	<!-- Wheelchair description -->
+	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg wheelchair_description)" />
+
+	<!-- Transformations -->
+	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+	<node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" />
+
+	<!-- Move base -->
+	<node name="map_server" pkg="map_server" type="map_server" args="$(arg params_mapserver)" />
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<rosparam subst_value="True" param="base_local_planner">$(arg params_planner_type)</rosparam>
+		<rosparam subst_value="True" file="$(arg params_navigation_common)" command="load" ns="global_costmap" />	
+		<rosparam subst_value="True" file="$(arg params_navigation_common)" command="load" ns="local_costmap" />	
+		<rosparam subst_value="True" file="$(arg params_navigation)" command="load" />
+	</node>
+
+</launch>
