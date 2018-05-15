@@ -26,10 +26,13 @@ shared_actions:
     attractors_source:  "/attractors"
     action_server:      "move_base"
     robot_radius:       0.6
-    update_rate:        1.0
+    update_rate:        10.0
     
-    repellors_strength: 1.0
-    repellors_decay:    0.2
-    goal_max_distance:  1.2
-    goal_half_position: 1.0
+    repellors_strength: 0.5
+    repellors_decay:    1.0
+    #goal_max_distance:  1.0
+    #goal_half_position: 1.0
+    goal_linear_max_distance: 2.0
+    goal_linear_slope:  1.3
+    goal_linear_min_distance: 1.4
     command_timeout:    6.0

@@ -20,18 +20,20 @@ obstacle_layer:
       topic:         /camera/scan
       marking:       true 
       clearing:      true 
-      obstacle_range:        5.0
-      raytrace_range:        5.5
+      obstacle_range:        3.0
+      raytrace_range:        4.5
+      inf_is_valid:     true
    hokuyo_scan: 
       data_type:     LaserScan
       topic:         /hokuyo/scan
       marking:       true 
       clearing:      true 
-      obstacle_range:        10.0
-      raytrace_range:        5.5
+      obstacle_range:        5.0
+      raytrace_range:        6.5
+      inf_is_valid: true
 
 inflation_layer:
    enabled:                true
    cost_scaling_factor:    10.0
-   inflation_radius:       0.2
+   inflation_radius:       0.1
 

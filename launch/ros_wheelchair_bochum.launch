@@ -8,7 +8,7 @@
 	<!-- Running options -->
 	<arg name="autostart"			default="False" />
 	<arg name="enable_bci"			default="False" />
-	<arg name="visualization"		default="True" />
+	<arg name="visualization"		default="False" />
 	<arg name="on_place"			default="False" />
 	<arg name="enable_repellors"	default="True" />
 	<arg name="enable_attractors"	default="True" />
@@ -20,7 +20,7 @@
 	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/params_wheelchair.yaml" />
 
 	<!-- Navigation parameters -->
-	<arg name="params_planner_type"		 default="eband_local_planner/EBandPlannerROS" />
+	<arg name="params_local_planner_type"		 default="eband_local_planner/EBandPlannerROS" />
 	<arg name="params_navigation_common" default="$(find cnbiros_wheelchair_bochum)/params/params_navigation_common.yaml" />
 	<arg name="params_navigation"		 default="$(find cnbiros_wheelchair_bochum)/params/params_navigation.yaml" />
 	<arg name="params_mapserver"		 default="$(find cnbiros_wheelchair_bochum)/params/params_mapserver.yaml" />
@@ -107,7 +107,7 @@
 	<!-- Move base -->
 	<node name="map_server" pkg="map_server" type="map_server" args="$(arg params_mapserver)" />
 	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-		<rosparam subst_value="True" param="base_local_planner">$(arg params_planner_type)</rosparam>
+		<!-- <rosparam subst_value="True" param="base_local_planner">$(arg params_local_planner_type)</rosparam> -->
 		<rosparam subst_value="True" file="$(arg params_navigation_common)" command="load" ns="global_costmap" />	
 		<rosparam subst_value="True" file="$(arg params_navigation_common)" command="load" ns="local_costmap" />	
 		<rosparam subst_value="True" file="$(arg params_navigation)" command="load" />
