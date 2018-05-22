@@ -12,18 +12,19 @@
 	<arg name="on_place"			default="False" />
 	<arg name="enable_repellors"	default="True" />
 	<arg name="enable_attractors"	default="True" />
-	<arg name="enable_encoders"		default="False" />	<!-- Until encoders are not mounted -->
-	<arg name="enable_rgb_odometry"	default="True" />	<!-- To be modified when encoder are mounted -->
+	<arg name="enable_amcl"			default="False" />
+	<arg name="enable_slam"			default="False" />
 
 	<!-- Wheelchair parameters -->
 	<arg name="wheelchair_description"	default="$(find cnbiros_wheelchair_description)/urdf/wheelchair.urdf.xacro" />
 	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/params_wheelchair.yaml" />
 
 	<!-- Navigation parameters -->
-	<arg name="params_local_planner_type"		 default="eband_local_planner/EBandPlannerROS" />
-	<arg name="params_global_planner_type"		 default="global_planner/GlobalPlanner" />
-	<arg name="params_navigation_common" default="$(find cnbiros_wheelchair_bochum)/params/params_navigation_common.yaml" />
-	<arg name="params_navigation"		 default="$(find cnbiros_wheelchair_bochum)/params/params_navigation.yaml" />
+	<arg name="params_costmap_common"	 default="$(find cnbiros_wheelchair_bochum)/params/params_costmap_common.yaml" />
+	<arg name="params_costmap_global"	 default="$(find cnbiros_wheelchair_bochum)/params/params_costmap_global.yaml" />
+	<arg name="params_costmap_local"	 default="$(find cnbiros_wheelchair_bochum)/params/params_costmap_local.yaml" />
+	<arg name="params_planner"			 default="$(find cnbiros_wheelchair_bochum)/params/params_planner.yaml" />
+	<arg name="params_amcl_diff"		 default="$(find cnbiros_wheelchair_bochum)/params/params_amcl_diff.yaml" />
 	<arg name="params_mapserver"		 default="$(find cnbiros_wheelchair_bochum)/params/params_mapserver.yaml" />
 	<arg name="params_sharedactions"	 default="$(find cnbiros_wheelchair_bochum)/params/params_shared_actions.yaml" />
 
@@ -74,14 +75,28 @@
 
 	<!-- Move base -->
 	<node name="map_server" pkg="map_server" type="map_server" args="$(arg params_mapserver)" />
+
+	<group if="$(arg enable_amcl)">
+		<node pkg="amcl" type="amcl" name="amcl" output="screen">
+			<rosparam subst_value="True" file="$(arg params_amcl_diff)" command="load" />	
+			<remap from="scan" to="/hokuyo/scan" />
+		</node>
+	</group>
+
 	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-		<rosparam subst_value="True" param="base_local_planner">$(arg params_local_planner_type)</rosparam>
-		<rosparam subst_value="True" param="base_global_planner">$(arg params_global_planner_type)</rosparam>
-		<rosparam subst_value="True" file="$(arg params_navigation_common)" command="load" ns="global_costmap" />	
-		<rosparam subst_value="True" file="$(arg params_navigation_common)" command="load" ns="local_costmap" />	
-		<rosparam subst_value="True" file="$(arg params_navigation)" command="load" />
+		<rosparam subst_value="True" file="$(arg params_costmap_common)" command="load" ns="global_costmap" />	
+		<rosparam subst_value="True" file="$(arg params_costmap_common)" command="load" ns="local_costmap" />	
+		<rosparam subst_value="True" file="$(arg params_costmap_global)" command="load" />	
+		<rosparam subst_value="True" file="$(arg params_costmap_local)" command="load" />	
+		<rosparam subst_value="True" file="$(arg params_planner)" command="load" />
 	</node>
 
+	<group if="$(arg enable_slam)">
+		<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
+			<remap from="scan" to="/hokuyo/scan" />
+		</node>
+	</group>
+	
 	<!-- Shared actions parameters load -->
 	<rosparam subst_value="True" file="$(arg params_sharedactions)" command="load" />
 
@@ -89,6 +104,9 @@
 	<node pkg="cnbiros_shared_navigation" type="costmap_to_proximitysector" output="screen" name="costmap_to_proximitysector" />
 	<node pkg="cnbiros_shared_navigation" type="point_to_proximitysector" output="screen" name="point_to_proximitysector" />
 
+	
+	
+	
 	<!-- Shared actions -->
 	<node pkg="cnbiros_shared_navigation" type="shared_actions" output="screen" name="shared_actions" >
 	  <rosparam param="autostart" subst_value="True">$(arg autostart)</rosparam>
@@ -96,5 +114,7 @@
 	  <rosparam param="enable_repellors" subst_value="True">$(arg enable_repellors)</rosparam>
 	  <rosparam param="enable_attractors" subst_value="True">$(arg enable_attractors)</rosparam>
 	</node>
+
+	
 
 </launch>
