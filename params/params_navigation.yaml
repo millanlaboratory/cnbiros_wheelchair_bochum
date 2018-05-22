@@ -1,50 +1,41 @@
-# Global costmap parameters
-global_costmap:
-    global_frame:       /odom
-    robot_base_frame:   base_link
-    update_frequency:   5.0
-    static_map:         true
-    rolling_window:             false
-    width:              200
-    height:             200
-    origin_x:           0
-    origin_y:           0
-
-# Local costmap parameters
-local_costmap:
-    global_frame:               /odom
-    robot_base_frame:           base_link
-    update_frequency:           20.0
-    publish_frequency:          20.0
-    static_map:                 false
-    rolling_window:             true
-    width:                      6
-    height:                     6
-    resolution:                 0.05
-    always_send_full_costmap:   true 
-    plugins:
-        - {name: obstacle_layer, type: "costmap_2d::VoxelLayer"}
-        - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
 
 # Planner parameters
 
 
 NavfnROS:
     default_tolerance: 0.5
+    visualize_potential: true
+
+TrajectoryPlannerROS:
+    acc_lim_x:              0.550
+    acc_lim_y:              0.0 
+    acc_lim_theta:          0.350
+    max_vel_x:              0.290
+    min_vel_x:              0.1         # OK? - TO BE CHECKED
+    max_vel_theta:          0.300
+    min_vel_theta:          -0.300        # OK? - TO BE CHECKED
+    min_in_place_vel_theta: 0.17        # OK? - TO BE CHECKED
+    escape_vel:             -0.1        # OK? - TO BE CHECKED
+    holonomic_robot:        false
+    xy_goal_tolerance:      0.2     # TO BE CHECKED
+    yaw_goal_tolerance:     0.1     # TO BE CHECKED
 
 EBandPlannerROS:
     #max_vel_lin:            0.255
     #max_vel_th:             0.306
-    max_vel_lin:            0.7
-    max_vel_th:             0.7
-    min_vel_lin:            -0.7
-    min_vel_th:             -0.7
-    
-    max_translational_acceleration: 0.001
-    max_rotational_acceleration: 0.001
+    max_vel_lin:            0.290
+    max_vel_th:             0.300
+    min_vel_lin:            -0.290
+    min_vel_th:             -0.300
+    rot_stopped_vel:        0.19
+    trans_stopped_vel:      0.12
+   
+    max_acceleration:               0.5     # ???
+    max_translational_acceleration: 0.550
+    max_rotational_acceleration: 0.350
 
     xy_goal_tolerance:      0.5
-    yaw_goal_tolerance:     1.78
+    yaw_goal_tolerance:     0.3
 
     virtual_mass:           100.0
 
