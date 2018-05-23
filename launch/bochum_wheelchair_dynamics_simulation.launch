@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<launch>
+
+<!-- ************************************************************** -->
+<!--						Arguments								-->
+<!-- ************************************************************** -->
+
+	<!-- Running options -->
+	<arg name="autostart"			default="False" />
+	<arg name="enable_amcl"			default="False" />
+	<arg name="enable_slam"			default="False" />
+
+	<!-- Wheelchair parameters -->
+	<arg name="wheelchair_description"	default="$(find cnbiros_wheelchair_description)/urdf/wheelchair.urdf.xacro" />
+	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/params_wheelchair.yaml" />
+
+	<!-- Navigation parameters -->
+	<arg name="params_mapserver"		 default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_mapserver.yaml" />
+	<arg name="params_costmap_common"	 default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_costmap_common.yaml" />
+	<arg name="params_costmap_global"	 default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_costmap_global.yaml" />
+	<arg name="params_costmap_local"	 default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_costmap_local.yaml" />
+	<arg name="params_shareddynamics"	 default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_shared_dynamics.yaml" />
+
+
+<!-- ************************************************************** -->
+<!--						Wheelchair								-->
+<!-- ************************************************************** -->
+
+	<!-- Wheelchair parameter load -->
+	<rosparam subst_value="True" file="$(arg params_wheelchair)" command="load" />
+
+	<!-- Wheelchair description -->
+	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg wheelchair_description)" />
+
+	<!-- Transformations -->
+	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+	<node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" />
+
+<!-- ************************************************************** -->
+<!--						Navigation								-->
+<!-- ************************************************************** -->
+
+
+	<!-- Move base -->
+	<node name="map_server" pkg="map_server" type="map_server" args="$(arg params_mapserver)" />
+
+
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<rosparam subst_value="True" file="$(arg params_costmap_common)" command="load" ns="global_costmap" />	
+		<rosparam subst_value="True" file="$(arg params_costmap_common)" command="load" ns="local_costmap" />	
+		<rosparam subst_value="True" file="$(arg params_costmap_global)" command="load" />	
+		<rosparam subst_value="True" file="$(arg params_costmap_local)" command="load" />	
+	</node>
+
+	<!-- AMCL -->
+	<group if="$(arg enable_amcl)">
+		<node pkg="amcl" type="amcl" name="amcl" output="screen">
+			<rosparam subst_value="True" file="$(arg params_amcl_diff)" command="load" />	
+			<remap from="scan" to="/hokuyo/scan" />
+		</node>
+	</group>
+
+	<!-- SLAM -->
+	<group if="$(arg enable_slam)">
+		<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
+			<remap from="scan" to="/hokuyo/scan" />
+		</node>
+	</group>
+	
+	<!-- Shared navigation -->
+	<rosparam subst_value="True" file="$(arg params_shareddynamics)" command="load" />
+
+	<!-- Proximity sector converters -->
+	<node pkg="cnbiros_shared_navigation" type="costmap_to_proximitysector" output="screen" name="costmap_to_proximitysector" />
+	<node pkg="cnbiros_shared_navigation" type="point_to_proximitysector" output="screen" name="point_to_proximitysector" />
+
+	<!-- Shared dynamics -->	
+	<node pkg="cnbiros_shared_navigation" type="shared_dynamics" output="screen" name="shared_dynamics" />
+
+	
+
+</launch>
