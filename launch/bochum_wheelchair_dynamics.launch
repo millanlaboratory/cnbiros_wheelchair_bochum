@@ -81,6 +81,7 @@
 <!-- ************************************************************** -->
 
 	<!-- Move base -->
+	<!--
 	<node name="map_server" pkg="map_server" type="map_server" args="$(arg params_mapserver)" />
 
 
@@ -90,7 +91,7 @@
 		<rosparam subst_value="True" file="$(arg params_costmap_global)" command="load" />	
 		<rosparam subst_value="True" file="$(arg params_costmap_local)" command="load" />	
 	</node>
-
+	-->
 	<!-- AMCL -->
 	<group if="$(arg enable_amcl)">
 		<node pkg="amcl" type="amcl" name="amcl" output="screen">
@@ -106,11 +107,14 @@
 		</node>
 	</group>
 	
+	
 	<!-- Shared navigation -->
 	<rosparam subst_value="True" file="$(arg params_shareddynamics)" command="load" />
 
 	<!-- Proximity sector converters -->
+	<!--
 	<node pkg="cnbiros_shared_navigation" type="costmap_to_proximitysector" output="screen" name="costmap_to_proximitysector" />
+	-->
 	<node pkg="cnbiros_shared_navigation" type="point_to_proximitysector" output="screen" name="point_to_proximitysector" />
 
 	<!-- Shared dynamics -->	

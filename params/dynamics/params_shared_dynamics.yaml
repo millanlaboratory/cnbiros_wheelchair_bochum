@@ -23,13 +23,17 @@ point_to_proximitysector:
 shared_dynamics:
     robot_base_frame:   "base_link"
     
-    angular_repellors_strength:     5.0
-    angular_repellors_decay:        1.0
-    angular_repellors_occupancy:    5.0     
+    angular_repellors_strength:     0.01    # 1/nsectors?
+    angular_repellors_decay:        4.0
+    #angular_repellors_occupancy:    5.0     
 
-    linear_velocity_min:    0.08
-    linear_velocity_max:    0.25 #0.29
-    linear_velocity_slope:  0.03
-    linear_safe_distance:   1.2
+    angular_velocity_min:   0.0
+    angular_velocity_max:   0.3
+
+    linear_velocity_min:    0.1
+    linear_velocity_max:    0.15 #0.29
+    linear_velocity_decay:  1.0
+    robot_safe_distance:   0.2
     
     update_rate:        10.0
+    publish_frequency: 5.0
