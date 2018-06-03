@@ -1,23 +1,26 @@
-# Costmap to proximity sector parameters
-costmap_to_proximitysector:
-    costmap:
-        threshold:  100.0
-        frame_id:   "base_link"
-        source:     "/move_base/local_costmap/costmap"
-        sectors:    "/shared_dynamics/repellors"
-        min_angle:  -1.570796325
-        max_angle:  1.570796325 
-        nsectors:   41
+# Point to proximity sector parameters
+laserscan_to_proximitygrid:
+    frame_id:   "hokuyo_link"                       # Temp (to be changed with front frame)
+    sources:     ["/hokuyo/scan", "/camera/scan"]
+    grid:       "/shared_dynamics/repellors"
+    angle_min:  -1.570796325
+    angle_max:  1.570796325 
+    angle_inc:  0.15708         # 9 degrees
+    range_min:  0.0
+    range_max:  6.0
+    frequency:  20.0
 
 # Point to proximity sector parameters
-point_to_proximitysector:
-    point:
-        frame_id:   "base_link"
-        source:     "/point"
-        sectors:    "/shared_dynamics/attractors"
-        min_angle:  -1.570796325
-        max_angle:  1.570796325 
-        nsectors:   41
+point_to_proximitygrid:
+    frame_id:   "hokuyo_link"                       # Temp (to be changed with front frame)
+    sources:     ["/bci_command"]
+    grid:       "/shared_dynamics/attractors"
+    angle_min:  -1.570796325
+    angle_max:  1.570796325 
+    angle_inc:  0.15708         # 9 degrees
+    range_min:  0.0
+    range_max:  6.0
+    frequency:  20.0
 
 # Shared actions parameters
 shared_dynamics:
@@ -37,3 +40,14 @@ shared_dynamics:
     
     update_rate:        10.0
     publish_frequency: 5.0
+
+## Costmap to proximity sector parameters
+#costmap_to_proximitysector:
+#    costmap:
+#        threshold:  100.0
+#        frame_id:   "base_link"
+#        source:     "/move_base/local_costmap/costmap"
+#        sectors:    "/shared_dynamics/repellors"
+#        min_angle:  -1.570796325
+#        max_angle:  1.570796325 
+#        nsectors:   41

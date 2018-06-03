@@ -9,19 +9,11 @@
 	<arg name="autostart"			default="False" />
 	<arg name="enable_encoders"		default="False" />	<!-- Until encoders are not mounted -->
 	<arg name="enable_rgb_odometry"	default="True" />	<!-- To be modified when encoder are mounted -->
-	<arg name="enable_amcl"			default="False" />
-	<arg name="enable_slam"			default="False" />
 	<arg name="enable_kinect"		default="False" />
 
-	<!-- Wheelchair parameters -->
+	<!-- Parameters -->
 	<arg name="wheelchair_description"	default="$(find cnbiros_wheelchair_description)/urdf/wheelchair.urdf.xacro" />
 	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/params_wheelchair.yaml" />
-
-	<!-- Navigation parameters -->
-	<arg name="params_mapserver"		 default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_mapserver.yaml" />
-	<arg name="params_costmap_common"	 default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_costmap_common.yaml" />
-	<arg name="params_costmap_global"	 default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_costmap_global.yaml" />
-	<arg name="params_costmap_local"	 default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_costmap_local.yaml" />
 	<arg name="params_shareddynamics"	 default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_shared_dynamics.yaml" />
 
 	
@@ -80,44 +72,27 @@
 <!--						Navigation								-->
 <!-- ************************************************************** -->
 
-	<!-- Move base -->
-	<!--
-	<node name="map_server" pkg="map_server" type="map_server" args="$(arg params_mapserver)" />
-
-
-	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-		<rosparam subst_value="True" file="$(arg params_costmap_common)" command="load" ns="global_costmap" />	
-		<rosparam subst_value="True" file="$(arg params_costmap_common)" command="load" ns="local_costmap" />	
-		<rosparam subst_value="True" file="$(arg params_costmap_global)" command="load" />	
-		<rosparam subst_value="True" file="$(arg params_costmap_local)" command="load" />	
-	</node>
-	-->
-	<!-- AMCL -->
-	<group if="$(arg enable_amcl)">
-		<node pkg="amcl" type="amcl" name="amcl" output="screen">
-			<rosparam subst_value="True" file="$(arg params_amcl_diff)" command="load" />	
-			<remap from="scan" to="/hokuyo/scan" />
-		</node>
-	</group>
-
-	<!-- SLAM -->
-	<group if="$(arg enable_slam)">
-		<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
-			<remap from="scan" to="/hokuyo/scan" />
-		</node>
-	</group>
-	
 	
 	<!-- Shared navigation -->
 	<rosparam subst_value="True" file="$(arg params_shareddynamics)" command="load" />
 
-	<!-- Proximity sector converters -->
-	<!--
-	<node pkg="cnbiros_shared_navigation" type="costmap_to_proximitysector" output="screen" name="costmap_to_proximitysector" />
-	-->
-	<node pkg="cnbiros_shared_navigation" type="point_to_proximitysector" output="screen" name="point_to_proximitysector" />
+	<!-- Proximity Grid converters -->
+	<node pkg="cnbiros_shared_navigation" type="laserscan_to_proximitygrid" output="screen" name="laserscan_to_proximitygrid" /> 
+	<node pkg="cnbiros_shared_navigation" type="point_to_proximitygrid" output="screen" name="point_to_proximitygrid" /> 
+
+	<!-- Proximity Grid visualization -->
+	<node pkg="cnbiros_shared_navigation" type="proximitygrid_visualizer" output="screen" name="visualizer_repellors" > 
+		<remap from="/proximity_grid" to="shared_dynamics/repellors" />
+		<remap from="/visualization" to="shared_dynamics/repellors_visualization" />
+	</node>
+	
+	<node pkg="cnbiros_shared_navigation" type="proximitygrid_visualizer" output="screen" name="visualizer_attractors" > 
+		<remap from="/proximity_grid" to="shared_dynamics/attractors" />
+		<remap from="/visualization" to="shared_dynamics/attractors_visualization" />
+	</node>
+
 
 	<!-- Shared dynamics -->	
-	<node pkg="cnbiros_shared_navigation" type="shared_dynamics" output="screen" name="shared_dynamics" />
+	<!-- <node pkg="cnbiros_shared_navigation" type="shared_dynamics" output="screen" name="shared_dynamics" /> -->
 
 </launch>
