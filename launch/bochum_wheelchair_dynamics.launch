@@ -9,7 +9,7 @@
 	<arg name="autostart"			default="False" />
 	<arg name="enable_encoders"		default="False" />	<!-- Until encoders are not mounted -->
 	<arg name="enable_rgb_odometry"	default="True" />	<!-- To be modified when encoder are mounted -->
-	<arg name="enable_kinect"		default="False" />
+	<arg name="enable_kinect"		default="True" />
 
 	<!-- Parameters -->
 	<arg name="wheelchair_description"	default="$(find cnbiros_wheelchair_description)/urdf/wheelchair.urdf.xacro" />
@@ -93,6 +93,6 @@
 
 
 	<!-- Shared dynamics -->	
-	<!-- <node pkg="cnbiros_shared_navigation" type="shared_dynamics" output="screen" name="shared_dynamics" /> -->
+	<node pkg="cnbiros_shared_navigation" type="shared_dynamics" output="screen" name="shared_dynamics" />
 
 </launch>
