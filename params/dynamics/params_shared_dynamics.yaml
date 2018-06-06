@@ -13,7 +13,7 @@ laserscan_to_proximitygrid:
 # Point to proximity sector parameters
 point_to_proximitygrid:
     frame_id:   "hokuyo_link"                       # Temp (to be changed with front frame)
-    sources:     ["/point"]
+    sources:     "/bci_command"
     grid:       "/shared_dynamics/attractors"
     angle_min: -120.0
     angle_max:  120.0 

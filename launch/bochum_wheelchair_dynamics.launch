@@ -6,17 +6,39 @@
 <!-- ************************************************************** -->
 
 	<!-- Running options -->
-	<arg name="autostart"			default="False" />
 	<arg name="enable_encoders"		default="False" />	<!-- Until encoders are not mounted -->
 	<arg name="enable_rgb_odometry"	default="True" />	<!-- To be modified when encoder are mounted -->
 	<arg name="enable_kinect"		default="True" />
+	<arg name="enable_bci"			default="False" />
+	<arg name="enable_autostart"	default="False" />
+	<arg name="enable_repellors"	default="True" />
+	<arg name="enable_attractors"	default="True" />
+	<arg name="enable_joystick"		default="False" />
+
 
 	<!-- Parameters -->
 	<arg name="wheelchair_description"	default="$(find cnbiros_wheelchair_description)/urdf/wheelchair.urdf.xacro" />
-	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/params_wheelchair.yaml" />
-	<arg name="params_shareddynamics"	 default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_shared_dynamics.yaml" />
+	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_wheelchair.yaml" />
+	<arg name="params_shared_dynamics"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_shared_dynamics.yaml" />
+	<arg name="params_bci_interfaces"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_bci_interfaces.yaml" />
+	<arg name="params_joy"				default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_joy.yaml" />
 
 	
+<!-- ************************************************************** -->
+<!--						BCI										-->
+<!-- ************************************************************** -->
+	<group if="$(arg enable_bci)">
+
+		<!-- BCI interfaces parameters -->
+		<rosparam subst_value="True" file="$(arg params_bci_interfaces)" command="load" />
+		
+		<!-- TiD interface -->
+		<node pkg="cnbiros_bci" type="rostid" name="rostid" output="screen" />
+		
+		<!-- TiD converter -->
+		<node pkg="cnbiros_bci" type="tid_to_point" output="screen" name="tid_to_point" />
+	</group>
+
 
 
 <!-- ************************************************************** -->
@@ -74,7 +96,7 @@
 
 	
 	<!-- Shared navigation -->
-	<rosparam subst_value="True" file="$(arg params_shareddynamics)" command="load" />
+	<rosparam subst_value="True" file="$(arg params_shared_dynamics)" command="load" />
 
 	<!-- Proximity Grid converters -->
 	<node pkg="cnbiros_shared_navigation" type="laserscan_to_proximitygrid" output="screen" name="laserscan_to_proximitygrid" /> 
@@ -93,6 +115,39 @@
 
 
 	<!-- Shared dynamics -->	
-	<node pkg="cnbiros_shared_navigation" type="shared_dynamics" output="screen" name="shared_dynamics" />
+	<node pkg="cnbiros_shared_navigation" type="shared_dynamics" output="screen" name="shared_dynamics" >
+	  <rosparam param="enable_autostart" subst_value="True">$(arg enable_autostart)</rosparam>
+	  <rosparam param="enable_repellors" subst_value="True">$(arg enable_repellors)</rosparam>
+	  <rosparam param="enable_attractors" subst_value="True">$(arg enable_attractors)</rosparam>
+	</node>
+
+<!-- ************************************************************** -->
+<!--						Joystick								-->
+<!-- ************************************************************** -->
+
+	<group if="$(arg enable_joystick)">
+
+		<!-- Load joystick parameters -->
+		<rosparam subst_value="True" file="$(arg params_joy)" command="load" />
+		
+		<!-- Run joy node -->
+		<node pkg="joy" type="joy_node" name="joy_node" output="screen" />
+		
+		<!-- Run joy teleop node -->
+		<node pkg="joy_teleop" type="joy_teleop.py" name="joy_teleop" />
+		
+		<!-- Run joy filter control -->
+		<node pkg="cnbiros_joystick" type="joy_filter_control" name="joy_filter_control" output="screen"/>
+	</group>
+
+<!-- ************************************************************** -->
+<!--						State control							-->
+<!-- ************************************************************** -->
+
+	<!-- Run state control node -->
+	<node pkg="cnbiros_wheelchair_bci" type="wheelchair_state_control" name="wheelchair_state_control" output="screen"/>
+
+	
+
 
 </launch>

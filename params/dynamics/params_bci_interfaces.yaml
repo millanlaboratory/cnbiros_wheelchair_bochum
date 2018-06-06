@@ -1,0 +1,26 @@
+rostid:
+    tid_pipes: [/dev, /bus]
+
+tid_to_point:
+    frame_id: hokuyo_link
+    source:   /rostid_cnbi2ros
+    point:    /bci_command
+    distance: 1.0
+    commands:
+        - {event: "0x6603", angle:  0.0}
+        - {event: "0x6605", angle:  45.0}
+        - {event: "0x6606", angle: -45.0}
+        #- {event: "0x6305", angle:  -0.52}
+        #- {event: "0x6303", angle:  0.52}
+        #- {event: "0x6306", angle:  0.0}
+
+tid_to_cmdvel:
+    source:   /rostid_cnbi2ros
+    target:   /cmd_vel
+    commands:
+        - {event: "0x6601", linear:  0.0, angular:  0.0, label: "start"}
+        - {event: "0x6602", linear:  0.0, angular:  0.0, label: "stop"}
+        - {event: "0x6603", linear:  0.3, angular:  0.0, label: "forward"}
+        - {event: "0x6604", linear: -0.3, angular:  0.0, label: "backward"}
+        - {event: "0x6605", linear:  0.0, angular:  30.0, label: "left"}
+        - {event: "0x6606", linear:  0.0, angular: -30.0, label: "right"}

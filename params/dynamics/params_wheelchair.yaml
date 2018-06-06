@@ -1,0 +1,27 @@
+# Kinect to Laser scan parameters
+kinect_to_laserscan:
+    range_min:  0.45
+    range_max:  3.5
+
+# Hokuyo parameters
+hokuyo_scan:
+    frame_id:   hokuyo_link
+    angle_min:  -2.0944         # -2.0*M_PI/3.0 -> -120.0 deg
+    angle_max:   2.0944         #  2.0*M_PI/3.0 ->  120.0 deg
+
+# Wheelchair motors parameters
+motors:
+    port:   /dev/controller
+    max_vel_lin:    0.290 
+    min_vel_lin:    -0.290
+    max_vel_th:     0.300
+    min_vel_th:     -0.300 
+
+# Wheelchair odometry parameters
+odometry:
+    lport:      /dev/encoder.left
+    rport:      /dev/encoder.right
+    axle:       0.5240
+    diameter:   0.3556
+    revolution: 280
+
