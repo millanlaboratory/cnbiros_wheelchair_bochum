@@ -1,0 +1,7 @@
+#system_state:
+
+bci_state:
+    source: /rostid_cnbi2ros
+    states:
+        - {event: "0x6601", service: "system_state/navigation_start"}
+        - {event: "0x6602", service: "system_state/navigation_stop"}

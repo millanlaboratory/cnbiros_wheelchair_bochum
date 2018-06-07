@@ -22,6 +22,7 @@
 	<arg name="params_shared_dynamics"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_shared_dynamics.yaml" />
 	<arg name="params_bci_interfaces"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_bci_interfaces.yaml" />
 	<arg name="params_joy"				default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_joy.yaml" />
+	<arg name="params_state_control"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_state_control.yaml" />
 
 	
 <!-- ************************************************************** -->
@@ -144,8 +145,14 @@
 <!--						State control							-->
 <!-- ************************************************************** -->
 
-	<!-- Run state control node -->
-	<node pkg="cnbiros_wheelchair_bci" type="wheelchair_state_control" name="wheelchair_state_control" output="screen"/>
+	<!-- Load state control parameters -->
+	<rosparam subst_value="True" file="$(arg params_state_control)" command="load" />
+	
+	<!-- Run system state control node -->
+	<node pkg="cnbiros_state_control" type="system_state" name="system_state" output="screen"/>
+	
+	<!-- Run BCI state control node -->
+	<node pkg="cnbiros_state_control" type="bci_state" name="bci_state" output="screen"/>
 
 	
 
