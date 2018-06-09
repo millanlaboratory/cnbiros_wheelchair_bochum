@@ -9,10 +9,11 @@
 	<arg name="enable_bci"			default="False" />
 
 	<!-- Wheelchair parameters -->
-	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/params_wheelchair.yaml" />
+	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_wheelchair.yaml" />
 
 	<!-- BCI control parameters -->
-	<arg name="params_bci_interfaces"	default="$(find cnbiros_wheelchair_bochum)/params/params_bci_interfaces.yaml" />
+	<arg name="params_bci_interfaces"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_bci_interfaces.yaml" />
+
 	
 <!-- ************************************************************** -->
 <!--						BCI	Interfaces							-->

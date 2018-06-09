@@ -18,21 +18,21 @@ teleop:
 
   navigation_control:
       type: service
-      service_name: /wheelchair_state_control/navigation_control
+      service_name: /system_state/navigation_control
       buttons: [0]
   
   joystick_control:
       type: service
-      service_name: /wheelchair_state_control/joystick_control
+      service_name: /system_state/joystick_control
       buttons: [1]
   
   navigation_start:
       type: service
-      service_name: /wheelchair_state_control/navigation_start
+      service_name: /system_state/navigation_start
       buttons: [2]
   
   navigation_stop:
       type: service
-      service_name: /wheelchair_state_control/navigation_stop
+      service_name: /system_state/navigation_stop
       buttons: [3]
  
