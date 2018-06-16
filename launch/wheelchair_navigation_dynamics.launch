@@ -14,6 +14,7 @@
 	<arg name="enable_repellors"	default="True" />
 	<arg name="enable_attractors"	default="True" />
 	<arg name="enable_joystick"		default="False" />
+	<arg name="enable_recording"	default="True" />
 
 
 	<!-- Parameters -->
@@ -23,6 +24,21 @@
 	<arg name="params_bci_interfaces"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_bci_interfaces.yaml" />
 	<arg name="params_joy"				default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_joy.yaml" />
 	<arg name="params_state_control"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_state_control.yaml" />
+
+	<!-- Bag parameters -->
+	<arg name="set_bag_name" />
+	<arg name="set_save_dir"	default="/mnt/data/cnbitk_data/" />
+	<arg name="set_save_topics" default="/bci_command /camera/scan /cmd_vel 
+										/hokuyo/scan /joy /joy_teleop/cmd_vel 
+										/odom /rostic_cnbi2ros /rostid_cnbi2ros 
+										/shared_dynamics/attractors 
+										/shared_dynamics/repellors 
+										/camera/rgb/image_rect_color_throttle
+										/camera/depth_registered/image_raw_throttle
+										/camera/rgb/camera_info_throttle" />
+	<arg name="recording_camera_rate" default="3.0" />
+
+
 
 	
 <!-- ************************************************************** -->
@@ -64,11 +80,17 @@
 
 	<!-- Visual odometry - rtabmap -->
 	<group if="$(arg enable_rgb_odometry)">
-	<node pkg="rtabmap_ros" type="rgbd_odometry" name="rgbd_odometry" >
-		<remap from="/rgb/image/" to="/camera/rgb/image_rect_color"/>
-		<remap from="/depth/image/" to="/camera/depth_registered/image_raw"/>
-		<remap from="/rgb/camera_info/" to="/camera/rgb/camera_info" />
-	</node>
+		<node pkg="rtabmap_ros" type="rgbd_odometry" name="rgbd_odometry" >
+			<param name="subscribe_scan" value="true" />
+			<param name="Odom/Holonomic" type="string" value="false" />
+			<param name="Odom/ResetCountdown" type="string" value="10" />
+			<param name="Odom/FilteringStrategy" type="string" value="1" />
+			<param name="Odom/GuessMotion" type="string" value="true" />
+			<remap from="rgb/image" to="/camera/rgb/image_rect_color"/>
+			<remap from="depth/image" to="/camera/depth_registered/image_raw"/>
+			<remap from="rgb/camera_info" to="/camera/rgb/camera_info" />
+			<remap from="scan" to="/hokuyo/scan" />
+		</node>
 	</group>
 
 	<!-- Hokuyo LaserScan -->
@@ -155,6 +177,11 @@
 	<node pkg="cnbiros_state_control" type="bci_state" name="bci_state" output="screen"/>
 
 	
-
-
+	<!-- ***************** ROS bag recording ********************* -->
+	<group if="$(arg enable_recording)">
+		<node pkg="topic_tools" type="throttle" name="throttle_camera_image" args="messages /camera/rgb/image_rect_color $(arg recording_camera_rate)" />
+		<node pkg="topic_tools" type="throttle" name="throttle_camera_depth" args="messages /camera/depth_registered/image_raw $(arg recording_camera_rate)" />
+		<node pkg="topic_tools" type="throttle" name="throttle_camera_info"  args="messages /camera/rgb/camera_info $(arg recording_camera_rate)" />
+		<node pkg="rosbag" type="record" name="rosbag_record" args=" -O $(arg set_save_dir)/$(arg set_bag_name) record -j $(arg set_save_topics)" />
+	</group>
 </launch>

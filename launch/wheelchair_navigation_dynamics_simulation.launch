@@ -12,6 +12,7 @@
 	<arg name="enable_repellors"	default="True" />
 	<arg name="enable_attractors"	default="True" />
 	<arg name="enable_joystick"		default="False" />
+	<arg name="enable_recording"	default="True" />
 	
 
 	<!-- Parameters -->
@@ -21,6 +22,11 @@
 	<arg name="params_bci_interfaces"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_bci_interfaces.yaml" />
 	<arg name="params_joy"				default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_joy.yaml" />
 	<arg name="params_state_control"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_state_control.yaml" />
+	
+	<!-- Bag parameters -->
+	<arg name="set_bag_name" />
+	<arg name="set_save_dir"	default="/mnt/data/cnbitk_data/" />
+	<arg name="set_save_topics" default="/bci_command /camera/scan /cmd_vel /hokuyo/scan /joy /joy_teleop/cmd_vel /odom /rostic_cnbi2ros /rostid_cnbi2ros /shared_dynamics/attractors /shared_dynamics/repellors" />
 
 
 <!-- ************************************************************** -->
@@ -118,7 +124,10 @@
 	<!-- Run BCI state control node -->
 	<node pkg="cnbiros_state_control" type="bci_state" name="bci_state" output="screen"/>
 
-
+	<!-- ***************** ROS bag recording ********************* -->
+	<group if="$(arg enable_recording)">
+		<node pkg="rosbag" type="record" name="rosbag_record" args=" -O $(arg set_save_dir)/$(arg set_bag_name) record $(arg set_save_topics)" />
+	</group>
 	
 
 </launch>
