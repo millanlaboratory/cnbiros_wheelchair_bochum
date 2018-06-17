@@ -1,0 +1,45 @@
+system_manager:
+    states:
+        - {id: 0, label: "Idle",        service: "system_manager/idle"}
+        - {id: 1, label: "Joystick",    service: "system_manager/joystick_start"}
+        - {id: 2, label: "Navigation",  service: "system_manager/navigation_start"}
+        - {id: 3, label: "Pause",       service: "system_manager/navigation_pause"}
+        - {id: 4, label: "Reached",     service: "system_manager/navigation_reached"}
+        - {id: 5, label: "Docked",      service: "system_manager/navigation_docked"}
+
+    transitions:
+        - {from: "Idle",        to: "Joystick"}
+        - {from: "Idle",        to: "Navigation"}
+        - {from: "Joystick",    to: "Navigation"}
+        - {from: "Navigation",  to: "Joystick"}
+        - {from: "Navigation",  to: "Pause"}
+        - {from: "Navigation",  to: "Reached"}
+        - {from: "Navigation",  to: "Docked"}
+        - {from: "Pause",       to: "Joystick"}
+        - {from: "Pause",       to: "Navigation"}
+        - {from: "Reached",     to: "Navigation"}
+        - {from: "Reached",     to: "Joystick"}
+        - {from: "Docked",      to: "Navigation"}
+        - {from: "Docked",      to: "Joystick"}
+
+    initial_state: "Pause"
+
+bci_handler:
+    source: /rostid_cnbi2ros
+    states:
+        - {event: "0x6601", label: "Navigation", service: "system_manager/navigation_start"}
+        - {event: "0x6602", label: "Pause",      service: "system_manager/navigation_pause"}
+        - {event: "0x660B", label: "Reached",    service: "system_manager/navigation_reached"}
+        - {event: "0x660C", label: "Docked",     service: "system_manager/navigation_docked"}
+
+joystick_handler:
+    source: /joy_teleop/cmdvel
+
+navigation_handler:
+    rules:
+        - {state: "Navigation", service: "shared_dynamics/navigation_start"}
+        - {state: "Joystick",   service: "shared_dynamics/navigation_stop"}
+        - {state: "Pause",      service: "shared_dynamics/navigation_stop"}
+        - {state: "Reached",    service: "shared_dynamics/navigation_reached"}
+        - {state: "Docked",     service: "shared_dynamics/navigation_docked"}
+

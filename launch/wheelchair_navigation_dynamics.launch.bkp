@@ -22,16 +22,15 @@
 	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_wheelchair.yaml" />
 	<arg name="params_shared_dynamics"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_shared_dynamics.yaml" />
 	<arg name="params_bci_interfaces"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_bci_interfaces.yaml" />
-	<arg name="params_joy"				default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_joystick.yaml" />
-	<arg name="params_state_control"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_system_manager.yaml" />
+	<arg name="params_joy"				default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_joy.yaml" />
+	<arg name="params_state_control"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_state_control.yaml" />
 
 	<!-- Bag parameters -->
-	<arg name="set_bag_name"    default="wheelchair_navigation.bag"/>
+	<arg name="set_bag_name" />
 	<arg name="set_save_dir"	default="/mnt/data/cnbitk_data/" />
 	<arg name="set_save_topics" default="/bci_command /camera/scan /cmd_vel 
 										/hokuyo/scan /joy /joy_teleop/cmd_vel 
 										/odom /rostic_cnbi2ros /rostid_cnbi2ros 
-										/control/system_state
 										/shared_dynamics/attractors 
 										/shared_dynamics/repellors 
 										/camera/rgb/image_rect_color_throttle
@@ -170,19 +169,12 @@
 
 	<!-- Load state control parameters -->
 	<rosparam subst_value="True" file="$(arg params_state_control)" command="load" />
-
-	<!-- System manager -->
-	<node pkg="cnbiros_state_control" type="test_manager" name="system_manager" output="screen" />
-
-	<!-- BCI handler -->
-	<node pkg="cnbiros_state_control" type="bci_handler" name="bci_handler" output="screen" />
-
-	<!-- Joystick handler -->
-	<node pkg="cnbiros_state_control" type="joystick_handler" name="joystick_handler" output="screen" />
-
-	<!-- Navigation handler -->
-	<node pkg="cnbiros_state_control" type="navigation_handler" name="navigation_handler" output="screen" />
 	
+	<!-- Run system state control node -->
+	<node pkg="cnbiros_state_control" type="system_state" name="system_state" output="screen"/>
+	
+	<!-- Run BCI state control node -->
+	<node pkg="cnbiros_state_control" type="bci_state" name="bci_state" output="screen"/>
 
 	
 	<!-- ***************** ROS bag recording ********************* -->
