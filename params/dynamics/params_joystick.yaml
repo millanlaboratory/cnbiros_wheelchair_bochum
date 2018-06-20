@@ -35,4 +35,14 @@ teleop:
       type: service
       service_name: /system_manager/navigation_pause
       buttons: [3]
+  
+  navigation_reached:
+      type: service
+      service_name: /system_manager/navigation_reached
+      buttons: [2]
+  
+  navigation_docked:
+      type: service
+      service_name: /system_manager/navigation_docked
+      buttons: [4]
  
