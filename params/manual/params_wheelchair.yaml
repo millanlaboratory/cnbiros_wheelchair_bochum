@@ -1,0 +1,7 @@
+# Wheelchair motors parameters
+motors:
+    port:   /dev/controller
+    max_vel_lin:    0.290 
+    min_vel_lin:    -0.290
+    max_vel_th:     0.300
+    min_vel_th:     -0.300 

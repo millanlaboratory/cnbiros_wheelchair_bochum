@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<launch>
+
+<!-- ************************************************************** -->
+<!--						Arguments								-->
+<!-- ************************************************************** -->
+
+	<!-- Parameters -->
+	<arg name="wheelchair_description"	default="$(find cnbiros_wheelchair_description)/urdf/wheelchair.urdf.xacro" />
+	<arg name="params_wheelchair"		default="$(find cnbiros_wheelchair_bochum)/params/manual/params_wheelchair.yaml" />
+	<arg name="params_joy"				default="$(find cnbiros_wheelchair_bochum)/params/manual/params_joystick.yaml" />
+
+
+<!-- ************************************************************** -->
+<!--						Wheelchair								-->
+<!-- ************************************************************** -->
+
+	<!-- Wheelchair parameter load -->
+	<rosparam subst_value="True" file="$(arg params_wheelchair)" command="load" />
+
+	<!-- Motors -->
+	<node name="motors" pkg="cnbiros_wheelchair" type="ros_wheelchair_motors" output="screen" />
+
+	<!-- Wheelchair description -->
+	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg wheelchair_description)" />
+
+	<!-- Transformations -->
+	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+	<node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" />
+
+
+<!-- ************************************************************** -->
+<!--						Joystick								-->
+<!-- ************************************************************** -->
+
+	<!-- Load joystick parameters -->
+	<rosparam subst_value="True" file="$(arg params_joy)" command="load" />
+	
+	<!-- Run joy node -->
+	<node pkg="joy" type="joy_node" name="joy_node" output="screen" />
+	
+	<!-- Run joy teleop node -->
+	<node pkg="joy_teleop" type="joy_teleop.py" name="joy_teleop" />
+	
+
+</launch>
