@@ -1,5 +1,6 @@
 joy_node:
-    dev:    /dev/input/js0
+    dev:    /dev/joystick
+    #dev:    /dev/input/js0
 
 teleop:
   move:
