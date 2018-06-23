@@ -26,17 +26,23 @@
 	<arg name="params_state_control"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_system_manager.yaml" />
 
 	<!-- Bag parameters -->
-	<arg name="set_bag_name"    default="wheelchair_navigation.bag"/>
+	<arg name="set_bag_name"    default="wheelchair_navigation"/>
 	<arg name="set_save_dir"	default="/mnt/data/cnbitk_data/" />
-	<arg name="set_save_topics" default="/bci_command /camera/scan /cmd_vel 
-										/hokuyo/scan /joy /joy_teleop/cmd_vel 
-										/odom /rostic_cnbi2ros /rostid_cnbi2ros 
-										/control/system_state
-										/shared_dynamics/attractors 
-										/shared_dynamics/repellors 
-										/camera/rgb/image_rect_color_throttle
-										/camera/depth_registered/image_raw_throttle
-										/camera/rgb/camera_info_throttle" />
+	<arg name="set_save_navigation_topics" default="/bci_command 
+													/camera/scan 
+													/hokuyo/scan
+													/cmd_vel
+													/joy 
+													/joy_teleop/cmd_vel 
+													/odom 
+													/rostic_cnbi2ros 
+													/rostid_cnbi2ros 
+													/control/system_state
+													/shared_dynamics/attractors 
+													/shared_dynamics/repellors"  />
+	<arg name="set_save_video_topics" default="/camera/rgb/image_rect_color_throttle
+											   /camera/depth_registered/image_raw_throttle
+											   /camera/rgb/camera_info_throttle" />
 	<arg name="recording_camera_rate" default="3.0" />
 
 
@@ -190,6 +196,8 @@
 		<node pkg="topic_tools" type="throttle" name="throttle_camera_image" args="messages /camera/rgb/image_rect_color $(arg recording_camera_rate)" />
 		<node pkg="topic_tools" type="throttle" name="throttle_camera_depth" args="messages /camera/depth_registered/image_raw $(arg recording_camera_rate)" />
 		<node pkg="topic_tools" type="throttle" name="throttle_camera_info"  args="messages /camera/rgb/camera_info $(arg recording_camera_rate)" />
-		<node pkg="rosbag" type="record" name="rosbag_record" args=" -O $(arg set_save_dir)/$(arg set_bag_name) record -j $(arg set_save_topics)" />
+		
+		<node pkg="rosbag" type="record" name="rosbag_record_navigation" args=" -O $(arg set_save_dir)/$(arg set_bag_name).navigation.bag record -j $(arg set_save_navigation_topics)" />
+		<node pkg="rosbag" type="record" name="rosbag_record_video"      args=" -O $(arg set_save_dir)/$(arg set_bag_name).video.bag record -j $(arg set_save_video_topics)" />
 	</group>
 </launch>
