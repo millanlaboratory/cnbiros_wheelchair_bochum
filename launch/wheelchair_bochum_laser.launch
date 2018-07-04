@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+
+<!-- ************************************************************** -->
+<!--						Wheelchair								-->
+<!-- ************************************************************** -->
+
+	<arg name="params_laser"	default="$(find cnbiros_wheelchair_bochum)/params/dynamics/params_laserfilters.yaml" />
+
+
+	<!-- Hokuyo LaserScan -->
+	<node name="hokuyo_scan" pkg="urg_node" type="urg_node" output="screen">
+		<remap from="scan" to="/hokuyo/scan"/>
+	</node>
+
+	<node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter">
+		<rosparam command="load" subst_value="True" file="$(arg params_laser)" />
+		<remap from="scan" to="/hokuyo/scan" />
+  </node>
+
+
+</launch>
