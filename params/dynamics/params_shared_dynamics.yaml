@@ -25,6 +25,7 @@ point_to_proximitygrid:
 # Shared actions parameters
 shared_dynamics:
     base_frame:                 "base_link"
+    robot_size: 0.6
     
     angular_repellors_strength:     0.1    # 1/nsectors?
     angular_repellors_decay:        1.0
@@ -39,8 +40,8 @@ shared_dynamics:
     linear_velocity_min:    0.0
     linear_velocity_max:    0.08 #0.29
     linear_velocity_decay:  1.0
-    safe_distance_front:    0.2
-    safe_distance_lateral:  0.1
+    safe_distance_front:    0.0
+    safe_distance_lateral:  0.0
     
     update_rate:        10.0
     publish_frequency: 5.0
